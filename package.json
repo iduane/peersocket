@@ -1,0 +1,38 @@
+{
+  "name": "peersocket",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require babel-core/register",
+    "build": "npm-run-all build:*",
+    "build:config": "babel peersocket.config.js --out-dir dist",
+    "build:utils": "babel utils --out-dir dist/utils",
+    "build:client": "babel client --out-dir dist/client",
+    "build:server": "babel server --out-dir dist/server"
+  },
+  "author": "duane <iduane@126.com>",
+  "license": "MIT",
+  "dependencies": {
+    "babel-loader": "^7.1.2",
+    "debug": "^3.1.0",
+    "npm": "^5.6.0",
+    "shortid": "^2.2.8",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4",
+    "stringify-object": "^3.2.1",
+    "wrtc": "0.0.65"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
+    "husky": "^0.14.3",
+    "mocha": "^4.1.0",
+    "npm-run-all": "^4.1.2",
+    "sinon": "^4.1.5",
+    "webpack": "^3.10.0",
+    "webpack-node-externals": "^1.6.0"
+  }
+}
