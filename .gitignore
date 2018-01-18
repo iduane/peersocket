@@ -62,6 +62,7 @@ typings/
 
 .history
 .vscode
-.idea/workspace.xml
+.idea/
+!.idea/workspace.bak.xml
 /dist/
 /.quantumsync/

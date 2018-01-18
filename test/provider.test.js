@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { spawn } from 'child_process';
 import path from 'path';
-import Provider from '../client/provider';
+import Provider from '../src/provider';
 import sleep from '../utils/sleep';
 import config from '../peersocket.config';
 
