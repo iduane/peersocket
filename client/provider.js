@@ -216,6 +216,7 @@ export default class Provider {
   }
 
   send(consumerId, data) {
+    log('send data to consumer[' + consumerId + ']');
     const wrappedData = new DataWrapper(
       consumerId,
       this.providerId,
