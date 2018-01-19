@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import EventEmitter from 'eventemitter3';
 import Consumer from './consumer';
 import Provider from './provider';
 import config from "../peersocket.config";
