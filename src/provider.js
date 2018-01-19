@@ -6,8 +6,6 @@ import config from '../peersocket.config.js';
 import DataWrapper from "../utils/data-wrapper";
 import stringifyObject from 'stringify-object';
 
-import { RTCPeerConnection, RTCIceCandidate, RTCSessionDescription } from 'wrtc';
-
 const log = debug('peersocket:provider');
 
 export default class Provider {
@@ -79,7 +77,7 @@ export default class Provider {
       this.cleanupConsumer(consumerId);
     }
 
-    const conn = new RTCPeerConnection();
+    const conn = new this.wrtc.RTCPeerConnection();
 
     const consumer = this.peerConnections[consumerId] = {
       consumerId,
@@ -166,7 +164,7 @@ export default class Provider {
     const consumer = this.peerConnections[consumerId];
     if (consumer) {
       log('add ice candidate from consumer[' + consumerId + ']');
-      consumer.peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
+      consumer.peerConnection.addIceCandidate(new this.wrtc.RTCIceCandidate(JSON.parse(candidate)));
     } else {
       log('have not initialize a peer connection for the consumer[' + consumerId + '] yet');
     }
@@ -179,14 +177,14 @@ export default class Provider {
 
       log('set remote description for consumer[' + consumerId + ']');
       conn.setRemoteDescription(
-        new RTCSessionDescription(remoteDesc),
+        new this.wrtc.RTCSessionDescription(remoteDesc),
 
         () => {
           log('create answer for consumer[' + consumerId + ']');
           conn.createAnswer((localDesc) => {
             log('set local description for consumer[' + consumerId + ']');
             conn.setLocalDescription(
-              new RTCSessionDescription(localDesc),
+              new this.wrtc.RTCSessionDescription(localDesc),
               () => {
                 log('set local description for consumer[' + consumerId + '] successful');
                 this.exchangeAnswer(consumerId, localDesc);
@@ -240,7 +238,7 @@ export default class Provider {
       }
     } else {
       log('consumer[' + consumerId + '] not connected');
-      reject(new Error('consumer[\' + consumerId + \'] not connected'));
+      reject(new Error('consumer[' + consumerId + '] not connected'));
     }
 
     return promise;

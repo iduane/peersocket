@@ -5,8 +5,6 @@ import DataWrapper from '../utils/data-wrapper';
 import debug from 'debug';
 import config from '../peersocket.config.js';
 
-import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'wrtc';
-
 const log = debug('peersocket:consumer');
 
 export default class Consumer {
@@ -101,7 +99,7 @@ export default class Consumer {
     this.channelReadyResolver = resolve;
 
     log('create peer connection');
-    const conn = new RTCPeerConnection();
+    const conn = new this.wrtc.RTCPeerConnection();
     this.peerConnection = conn;
 
     conn.onicecandidate = (e) => {
@@ -149,7 +147,7 @@ export default class Consumer {
 
     conn.createOffer((localDesc) => {
       conn.setLocalDescription(
-        new RTCSessionDescription(localDesc),
+        new this.wrtc.RTCSessionDescription(localDesc),
 
         () => {
           this.exchangeOffer(localDesc);
@@ -179,7 +177,7 @@ export default class Consumer {
 
   onRemoteExchangeICE(candidate) {
     log('add remote ice candidate');
-    this.peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
+    this.peerConnection.addIceCandidate(new this.wrtc.RTCIceCandidate(JSON.parse(candidate)));
   }
 
   exchangeOffer(localDesc) {
@@ -196,7 +194,7 @@ export default class Consumer {
 
     log('set remote description');
     conn.setRemoteDescription(
-      new RTCSessionDescription(remoteDesc),
+      new this.wrtc.RTCSessionDescription(remoteDesc),
 
       () => {
         log('peer connected');
@@ -223,7 +221,7 @@ export default class Consumer {
       setTimeout(() => {
         this.channelReadyResolver();
         this.channelReadyResolver = null;
-      }, 1000);
+      }, 100);
       log('disconnect from centric server since data channel connected');
       this.socket.disconnect();
     }

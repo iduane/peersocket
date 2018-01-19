@@ -1,5 +1,5 @@
-import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'wrtc';
-import api from './api';
+import './adapter';
+import api from '../src/api';
 
 const wrtc = { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate };
 

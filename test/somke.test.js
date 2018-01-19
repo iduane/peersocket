@@ -31,3 +31,12 @@ describe('Smoke', () => {
     expect(data2).to.eq('pong');
   }).timeout(10000);
 });
+
+// const { seed, peer } = peersocket;
+//
+// const testBroker = 'http://hoho.io:13799';
+// const seed1 = new seed(testBroker, 'seed1', 'i am seed1');
+// const peer1 = new peer(testBroker, 'seed1');
+//
+// seed1.on('data', console.log);
+// peer1.on('data', console.log);
