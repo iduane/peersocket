@@ -140,9 +140,9 @@ consumerIO.on('connect', (socket) => {
     socket.disconnect();
   };
 
-  socket.on('initialize', async ({ providerId, authToken }) => {
+  socket.on('initialize', async ({ providerId }) => {
     clearTimeout(initTimer);
-    if (authorizeConsumer(socket, providerId, authToken)) {
+    if (authorizeConsumer(socket, providerId)) {
       log('consumer[' + consumerId + '] connected to provider: ' + providerId);
       consumers[consumerId] = { consumerId, providerId, socket, provider: new ProviderAdapter(providerId) };
 
@@ -218,6 +218,6 @@ function authorizeProvider(socket, id, authToken) {
   return true; //TODO
 }
 
-function authorizeConsumer(socket, authToken) {
+function authorizeConsumer(socket, providerId) {
   return true; //TODO
 }

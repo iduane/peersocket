@@ -9,7 +9,8 @@
     "build:config": "babel peersocket.config.js --out-dir dist",
     "build:utils": "babel utils --out-dir dist/utils",
     "build:client": "babel src --out-dir dist/src",
-    "build:server": "babel server --out-dir dist/server"
+    "build:server": "babel server --out-dir dist/server",
+    "doc": "jsdoc src -c jsdoc.conf.json -d doc"
   },
   "author": "duane <iduane@126.com>",
   "license": "MIT",

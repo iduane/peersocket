@@ -7,14 +7,12 @@ import config from '../peersocket.config.js';
 
 import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'wrtc';
 
-const log = debug('peersocket');
+const log = debug('peersocket:consumer');
 
 export default class Consumer {
-  constructor(host, port, providerId, authToken) {
-    this.host = host;
-    this.port = port;
+  constructor(brokerUrl, providerId) {
+    this.brokerUrl = brokerUrl;
     this.providerId = providerId;
-    this.authToken = authToken;
 
     this.socket = null;
     this.id = null;
@@ -25,6 +23,8 @@ export default class Consumer {
 
     this.dataReceiptWaitingQueue = {};
     this.willClose = false;
+
+    this.dataListener = null;
   }
 
   async connectToCentric() {
@@ -41,10 +41,9 @@ export default class Consumer {
 
   connect() {
     const { promise, resolve, reject } = defer();
-    const url = 'http://' + this.host + ':' + this.port;
-    log('connect to centric server ' + url);
+    log('connect to centric server ' + this.brokerUrl);
 
-    this.socket = io.connect(url, {
+    this.socket = io.connect(this.brokerUrl, {
       path: '/ntf',
       secure: false,
       reconnect: false,
@@ -91,7 +90,6 @@ export default class Consumer {
   async initialize() {
     this.socket.emit('initialize', {
       providerId: this.providerId,
-      authToken: this.authToken,
     });
 
     return await waitChannel(this.socket, 'initialize-response');
@@ -123,11 +121,11 @@ export default class Consumer {
     };
 
     this.channel.onclose = () => {
+      log('data channel closed');
       this.cleanup();
     };
 
     this.channel.onmessage = (e) => {
-      log('receive data from provider');
       let data = e.data;
       if (data.indexOf('{') === 0) {
         data = JSON.parse(e.data);
@@ -225,7 +223,7 @@ export default class Consumer {
       setTimeout(() => {
         this.channelReadyResolver();
         this.channelReadyResolver = null;
-      }, 5000);
+      }, 1000);
       log('disconnect from centric server since data channel connected');
       this.socket.disconnect();
     }
@@ -243,7 +241,7 @@ export default class Consumer {
     });
     if (this.isChannelOpened) {
       this.channel.send(JSON.stringify(wrappedData));
-      this.dataReceiptWaitingQueue[wrappedData.rid] = resolve;
+      this.dataReceiptWaitingQueue[wrappedData.rid] = { resolve, reject };
     } else {
       log('data channel have not opened yet.');
       reject(new Error('data channel not open'));
@@ -253,21 +251,31 @@ export default class Consumer {
   }
 
   onData(wrappedData) {
+    log('receive data from provider');
+
     const {rid, consumerId} = wrappedData;
 
     if (this.isChannelOpened) {
       // send receipt
       this.channel.send('op:receipt,payload:' + rid);
-      // TODO: add handlers
+      log('send data receipt to provider');
+      if (this.dataListener) {
+        this.dataListener(wrappedData.data);
+      }
+
     } else {
       log('data channel is not ready yet');
     }
   }
 
+  pipeData(dataListener) {
+    this.dataListener = dataListener;
+  }
+
   onDataReceipt(rid) {
     log('receive data receipt');
     if (this.dataReceiptWaitingQueue[rid]) {
-      this.dataReceiptWaitingQueue[rid]();
+      this.dataReceiptWaitingQueue[rid].resolve();
       delete this.dataReceiptWaitingQueue[rid];
     }
   }
@@ -295,7 +303,12 @@ export default class Consumer {
       this.peerConnection = null;
     }
     this.isChannelOpened = -1;
+    for (let rid in this.dataReceiptWaitingQueue) {
+      this.dataReceiptWaitingQueue[rid].resolve();
+    }
     this.dataReceiptWaitingQueue = {};
     this.willClose = false;
+
+    this.dataListener = null;
   }
 }
