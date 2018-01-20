@@ -71,13 +71,13 @@ export default class Consumer {
     });
 
     this.socket.on('will-close', (reason) => {
-      log('remote will termiate this session with reason: ' + reason);
+      log('remote will terminate this session with reason: ' + reason);
       this.willClose = true;
     });
 
     this.socket.on('disconnect', () => {
       if (this.willClose) {
-        this.termiate();
+        this.terminate();
         reject(new Error('remote close this session'));
       }
     });
@@ -284,7 +284,7 @@ export default class Consumer {
     this.cleanup();
   }
   
-  termiate() {
+  terminate() {
     this.cleanup();
   }
 

@@ -83,7 +83,7 @@ class seed extends proto {
     super.close();
 
     if (this.provider) {
-      this.provider.termiate();
+      this.provider.terminate();
     }
   }
 }
@@ -120,7 +120,7 @@ class peer extends proto {
     super.close();
 
     if (this.consumer) {
-      this.consumer.termiate();
+      this.consumer.terminate();
     }
   }
 }

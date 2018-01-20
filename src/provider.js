@@ -277,7 +277,7 @@ export default class Provider {
     }
   }
 
-  termiate() {
+  terminate() {
     for (let consumerId in this.peerConnections) {
       this.cleanupConsumer(consumerId);
     }
