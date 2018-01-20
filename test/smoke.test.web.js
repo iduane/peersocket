@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { seed, peer } from '../src/index';
+import { seed, peer } from '../web/index';
 
 const testBroker = 'http://localhost:13799';
 
@@ -30,4 +30,5 @@ describe('Smoke', () => {
 
     expect(data2).to.eq('pong');
   }).timeout(10000);
+
 });
