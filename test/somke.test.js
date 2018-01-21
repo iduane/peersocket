@@ -1,11 +1,20 @@
 import { expect } from 'chai';
 import { seed, peer } from '../src/index';
+import BrokerFinder from '../src/broker-finder';
 
-const testBroker = 'http://localhost:13799';
+let testBroker = 'http://localhost:13799';
 
 let resources = [];
 
 describe('Smoke', () => {
+  before(async() => {
+    try {
+      testBroker = await BrokerFinder();
+    } catch (e) {
+      testBroker = 'http://localhost:13799';
+    }
+  });
+
   afterEach(() => {
     resources.forEach((res) => res.close());
     resources = [];
