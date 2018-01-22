@@ -1,31 +1,20 @@
 import { expect } from 'chai';
 import { seed, peer } from '../web/index';
-import BrokerFinder from "../src/broker-finder";
-
-let testBroker = 'http://localhost:13799';
 
 let resources = [];
 
 describe('Smoke', () => {
-  before(async() => {
-    try {
-      testBroker = await BrokerFinder();
-    } catch (e) {
-      testBroker = 'http://localhost:13799';
-    }
-  });
-
   afterEach(() => {
     resources.forEach((res) => res.close());
     resources = [];
   });
 
   it ('ping pong', async () => {
-    const seed1 = new seed(testBroker, 'seed1', 'i am seed1');
+    const seed1 = new seed(BROKER_URL, 'seed1', 'i am seed1');
     resources.push(seed1);
     await seed1.waitEventOnce('registered');
 
-    const peer1 = new peer(testBroker, 'seed1');
+    const peer1 = new peer(BROKER_URL, 'seed1');
     resources.push(peer1);
     await peer1.waitEventOnce('connected');
 

@@ -4,14 +4,18 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --require babel-core/register",
+    "test": "npm-run-all test:*",
+    "test:node": "mocha --require babel-core/register",
+    "test:web": "npm run prepare:fetch-broker && babel-node node_modules/.bin/karma start",
+    "prepare:fetch-broker": "babel-node ./fetch-broker.js",
     "build": "npm-run-all build:*",
     "build:config": "babel peersocket.config.js --out-dir dist",
     "build:utils": "babel utils --out-dir dist/utils",
     "build:client": "babel src --out-dir dist/src",
     "build:server": "babel server --out-dir dist/server",
     "build:web": "webpack",
-    "doc": "jsdoc src -c jsdoc.conf.json -d doc"
+    "doc": "jsdoc src -c jsdoc.conf.json -d doc",
+    "prepush": "npm test"
   },
   "author": "duane <iduane@126.com>",
   "license": "MIT",

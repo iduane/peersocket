@@ -2,9 +2,25 @@
 // Generated on Sat Jan 20 2018 02:03:09 GMT-0500 (EST)
 process.env.CHROME_BIN = require('puppeteer').executablePath();
 
+import os from 'os';
+import fs from 'fs';
+import path from 'path';
+import webpack from 'webpack';
+
+const localCachePath = path.resolve(os.homedir(), '.peersocket-server-address');
+let brokerUrl = 'http://localhost:13799';
+if (fs.existsSync(localCachePath)) {
+  brokerUrl = fs.readFileSync(localCachePath, 'utf8');
+}
+
 const webpackConfig = require('./webpack.config.js');
 // webpackConfig.entry = {};
-webpackConfig.plugins = [];
+webpackConfig.plugins = [
+  new webpack.DefinePlugin({
+    BROKER_URL: JSON.stringify(brokerUrl)
+  })
+];
+
 
 module.exports = function(config) {
   config.set({
@@ -20,7 +36,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/**/*.web.js'
+      'webtest/**/*.web.js'
     ],
 
 
@@ -32,7 +48,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        './test/**/*.test.web.js': ['webpack']
+        './webtest/**/*.test.web.js': ['webpack']
     },
 
     webpack: webpackConfig,

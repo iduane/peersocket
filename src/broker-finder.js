@@ -21,6 +21,7 @@ export default () => {
         return;
       }
       brokerUrl = data.split('\n')[0];
+      fs.writeFileSync(localCachePath, brokerUrl, 'utf8');
       resolve(brokerUrl);
     })
   }
